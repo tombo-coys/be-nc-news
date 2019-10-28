@@ -4,7 +4,10 @@
   "description": "bc-nc-news",
   "main": "index.js",
   "scripts": {
+    "migrate-rollback": "knex migrate:rollback",
+    "migrate-latest": "knex migrate:latest",
     "setup-dbs": "psql -f ./db/setup.sql",
+    "migrate-make": "knex migrate:make",
     "seed": "knex seed:run",
     "test-utils": "mocha spec/utils.spec.js",
     "test": "mocha spec/app.spec.js"
