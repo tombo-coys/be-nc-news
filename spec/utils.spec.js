@@ -98,7 +98,7 @@ describe('makeRefObj', () => {
       created_at: '2016 - 12 - 13T20: 58: 40.516Z'
     }]
 
-    const expected = { '35': `Stone Soup` }
+    const expected = { 'Stone Soup': 35 }
     expect(makeRefObj(actual)).to.eql(expected)
   });
   it('returns an object with two key-value pairs when passed an array with two items', () => {
@@ -122,7 +122,7 @@ describe('makeRefObj', () => {
     }];
 
 
-    const expected = { '24': `Game of talents: management lessons from top football coaches`, '25': `Sweet potato & butternut squash soup with lemon & garlic toast` }
+    const expected = { 'Game of talents: management lessons from top football coaches': 24, 'Sweet potato & butternut squash soup with lemon & garlic toast': 25 }
     expect(makeRefObj(actual)).to.eql(expected);
   });
   it('does not mutate the original array', () => {
@@ -149,4 +149,80 @@ describe('makeRefObj', () => {
   });
 });
 
-describe('formatComments', () => { });
+describe('formatComments', () => {
+  it('returns an empty array when passed an empty array', () => {
+    const input = [];
+    const articleRef = {}
+    const expected = [];
+    expect(formatComments(input, articleRef)).to.eql(expected)
+  });
+  it('returns a re-formatted array item when passed a single array item ', () => {
+    const input = [{
+      body: 'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      created_by: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488
+    }];
+    const articleRef = { 'A BRIEF HISTORY OF FOOD—NO BIG DEAL': 29 
+    const expected = [{
+      body: 'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      article_id: 29,
+      author: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488
+    }];
+    expect(formatComments(input, articleRef)).to.eql(expected);
+  });
+  it('returns a refomatted array item when passed more than one array item', () => {
+    const actual = [{
+      body: 'Reiciendis enim soluta a sed cumque dolor quia quod sint. Laborum tempore est et quisquam dolore. Qui voluptas consequatur cumque neque et laborum unde sed. Impedit et consequatur tempore dignissimos earum distinctio cupiditate.',
+      belongs_to: 'Who are the most followed clubs and players on Instagram?',
+      created_by: 'happyamy2016',
+      votes: 17,
+      created_at: 1489789669732
+    },
+    {
+      body: 'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      created_by: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488
+    }]
+    const articleRef = { 'Who are the most followed clubs and players on Instagram?': 19, 'A BRIEF HISTORY OF FOOD—NO BIG DEAL': 29 }
+    const expected = [{
+      body: 'Reiciendis enim soluta a sed cumque dolor quia quod sint. Laborum tempore est et quisquam dolore. Qui voluptas consequatur cumque neque et laborum unde sed. Impedit et consequatur tempore dignissimos earum distinctio cupiditate.',
+      article_id: 19,
+      author: 'happyamy2016',
+      votes: 17,
+      created_at: 1489789669732
+    },
+    {
+      body: 'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      article_id: 29,
+      author: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488
+    }]
+    expect(formatComments(actual, articleRef)).to.eql(expected);
+  });
+  it('doesnt mutate the array passed into the fucntion', () => {
+    const actual = [{
+      body: 'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      created_by: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488
+    }];
+    const articleRef = { 'A BRIEF HISTORY OF FOOD—NO BIG DEAL': 29 };
+    const expected = [{
+      body: 'Corporis magnam placeat quia nulla illum nisi. Provident magni aut et earum illo labore aperiam. Dolorem ipsum dignissimos est ex. Minima voluptatibus nihil commodi veritatis. Magnam aut suscipit dignissimos nostrum ea.',
+      belongs_to: 'A BRIEF HISTORY OF FOOD—NO BIG DEAL',
+      created_by: 'weegembump',
+      votes: 3,
+      created_at: 1504946266488
+    }];
+    formatComments(actual, articleRef)
+    expect(actual).to.eql(expected)
+  });
+});
