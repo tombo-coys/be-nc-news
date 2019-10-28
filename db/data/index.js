@@ -9,5 +9,4 @@ const data = {
     test: testData
 }
 
-console.log(data.test)
-module.exports = data[ENV]
+module.exports = data[ENV];
