@@ -82,20 +82,71 @@ describe('formatDates', () => {
 });
 
 describe('makeRefObj', () => {
-  it('', () => {
-    const
-
+  it('returns an empty object when passed an empty Array', () => {
+    const actual = [];
+    const expected = {};
+    expect(makeRefObj(actual)).to.eql(expected)
   });
-  // it('', () => {
-  //   const actual = [{
-  //     body:
-  //       "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-  //     belongs_to: "They're not exactly dogs, are they?",
-  //     created_by: 'butter_bridge',
-  //     votes: 16,
-  //     created_at: 1511354163389,
-  //   }]
-  // });
+  it('returns an object with one key-value pair when passed an array with one object', () => {
+    const actual = [{
+      article_id: 35,
+      title: 'Stone Soup',
+      body: 'The first day I put my family on a Paleolithic diet, I made my kids fried eggs and sausage for breakfast. If they were still hungry, I told them, they could help themselves to more sausage, but they were not allowed to grab a slice of bread, or toast an English muffin, or pour themselves a bowl of cereal. This represented a reversal of the usual strictures, and they were happy to oblige. It was like some weird, unexpected holiday—Passover in July.',
+      votes: 0,
+      topic: 'cooking',
+      author: 'cooljmessy',
+      created_at: '2016 - 12 - 13T20: 58: 40.516Z'
+    }]
+
+    const expected = { '35': `Stone Soup` }
+    expect(makeRefObj(actual)).to.eql(expected)
+  });
+  it('returns an object with two key-value pairs when passed an array with two items', () => {
+    const actual = [{
+      article_id: 24,
+      title: 'Game of talents: management lessons from top football coaches',
+      body: 'At lunchtime on the day of the Champions League final in 2012, Chelsea’s manager Roberto Di Matteo had selected 10 of his 11 players. He just didn’t know who to play in left midfield. The player would have to combat Bayern Munich’s brilliant Arjen Robben and Philipp Lahm. Going into the last team meeting, Di Matteo had a private chat with his left-back, Ashley Cole. He outlined the situation, then asked Cole who he would play at left-midfield. Instead of naming a seasoned star, Cole said: “Ryan Bertrand.” The 22-year-old reserve Bertrand had never played in the Champions League, let alone in club football’s biggest game. “Why?” asked Di Matteo, surprised. “I trust him,” replied Cole. Bertrand played well, and Chelsea beat Bayern on penalties. In part, this was a victory for talent management. Di Matteo had put aside his ego, and let trust between two players drive the decision. Talent management has been a business obsession at least since 1997, when the consultancy McKinsey identified a “war for talent”. The most visible battleground of this “war” is team sport. Football, in particular, is “the quintessential model for modern-day talent-dependent business”, writes Chris Brady, professor at Salford Business School. Big football clubs pay more than half their revenues to between 3 and 7 per cent of their workforce: the players. These young men are rich, multinational, mobile, often equipped with large egos and therefore hard to manage. Football managers are, above all, talent managers.',
+      votes: 0,
+      topic: 'football',
+      author: 'jessjelly',
+      created_at: '2017-04-01T10:54:48.304Z'
+    },
+    {
+      article_id: 25,
+      title: 'Sweet potato & butternut squash soup with lemon & garlic toast',
+      body: 'Roast your vegetables in honey before blitzing into this velvety smooth, spiced soup - served with garlicky, zesty ciabatta slices for dipping',
+      votes: 0,
+      topic: 'cooking',
+      author: 'weegembump',
+      created_at: '2017-08-18T09:25:14.275Z'
+    }];
+
+
+    const expected = { '24': `Game of talents: management lessons from top football coaches`, '25': `Sweet potato & butternut squash soup with lemon & garlic toast` }
+    expect(makeRefObj(actual)).to.eql(expected);
+  });
+  it('does not mutate the original array', () => {
+    const actual = [{
+      article_id: 25,
+      title: 'Sweet potato & butternut squash soup with lemon & garlic toast',
+      body: 'Roast your vegetables in honey before blitzing into this velvety smooth, spiced soup - served with garlicky, zesty ciabatta slices for dipping',
+      votes: 0,
+      topic: 'cooking',
+      author: 'weegembump',
+      created_at: '2017-08-18T09:25:14.275Z'
+    }];
+    const expected = [{
+      article_id: 25,
+      title: 'Sweet potato & butternut squash soup with lemon & garlic toast',
+      body: 'Roast your vegetables in honey before blitzing into this velvety smooth, spiced soup - served with garlicky, zesty ciabatta slices for dipping',
+      votes: 0,
+      topic: 'cooking',
+      author: 'weegembump',
+      created_at: '2017-08-18T09:25:14.275Z'
+    }];
+    makeRefObj(actual)
+    expect(actual).to.eql(expected)
+  });
 });
 
 describe('formatComments', () => { });
