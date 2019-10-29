@@ -1,4 +1,4 @@
-const { fetchTopics } = require('../models/topicsModels');
+const { fetchTopics } = require('../models/topicModels');
 
 const getTopics = (req, res, next) => {
     console.log('in the controller');
