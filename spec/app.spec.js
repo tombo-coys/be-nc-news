@@ -48,7 +48,7 @@ describe('/api', () => {
         });
     });
     describe('/api/users/:username', () => {
-        it('GET 200 returns a user obejct with three properties', () => {
+        it('GET 200 returns a user obejct with three correct keys', () => {
             return request(app)
                 .get('/api/users/butter_bridge')
                 .expect(200)
@@ -97,6 +97,30 @@ describe('/api', () => {
                         })
                     })
             });
+        });
+    });
+    describe('/api/articles/:article_id', () => {
+        it('GET 200 returns an article object with the correct keys', () => {
+            return request(app)
+                .get('/api/articles/1')
+                .expect(200)
+                .then(({ body: { article } }) => {
+                    expect(article).to.have.keys('author', 'title', 'body', 'article_id', 'topic', 'created_at', "votes", "comment_count")
+                })
+        });
+        it('GET 200 returns an object and not an array', () => {
+            return request(app)
+                .get('/api/articles/1')
+                .expect(200)
+                .then(({ body: { article } }) => {
+                    expect(article).to.be.an('object')
+                    expect(article).to.not.be.an('array')
+                })
+        });
+        // describe('/articles/:article_id ERRORS', () => {
+        //     it('DELETE 405 returns method not allowed error', () => {
+        //         return request(app)
+        //     });
         });
     });
 
