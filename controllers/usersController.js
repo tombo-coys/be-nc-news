@@ -4,7 +4,7 @@ const getUserById = (req, res, next) => {
     const { username } = req.params;
     fetchUserById(username).then(user => {
         res.status(200).json({ user })
-    })
+    }).catch(next)
 }
 
 module.exports = { getUserById };

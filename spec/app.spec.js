@@ -42,7 +42,7 @@ describe('/api', () => {
                     .delete('/api/topics')
                     .expect(405)
                     .then(({ body }) => {
-                        expect(body).to.eql({ msg: 'Delete method denied' })
+                        expect(body).to.eql({ msg: 'DELETE method denied' })
                     })
             })
         });
@@ -58,11 +58,45 @@ describe('/api', () => {
         });
         it('GET 200 returns an object not an array', () => {
             return request(app)
-            .get('/api/users/butter_bridge')
+                .get('/api/users/butter_bridge')
                 .expect(200)
                 .then(({ body: { user } }) => {
                     expect(user).to.be.an('object')
                 })
+        });
+        describe('/users/:username ERRORS ', () => {
+            it('DELETE 405 returns method not allowed error', () => {
+                return request(app)
+                    .delete('/api/users/butter_bridge')
+                    .expect(405)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ msg: 'DELETE method denied' })
+                    })
+            });
+            it('PATCH 405 returns method not allowed error', () => {
+                return request(app)
+                    .patch('/api/users/butter_bridge')
+                    .send({
+                        username: 'butter_bridge',
+                        name: 'tom',
+                        avatar_url: 'https://media-cdn.tripadvisor.com/media/photo-s/0e/7d/1d/39/the-spurs-cockerel.jpg',
+                    })
+                    .expect(405)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ msg: 'PATCH method denied' })
+                    })
+            })
+            it('GET 404 returns error message when the username passed doesnt exist', () => {
+                return request(app)
+                    .get('/api/users/unknownUsername')
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'Username does not exisit'
+                        })
+                    })
+            });
         });
     });
 
