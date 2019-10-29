@@ -10,7 +10,15 @@ describe('/api', () => {
     beforeEach(() => {
         return connection.seed.run();
     })
-    it('', () => {
-
+    describe('/api/topics', () => {
+        it('GET 200, returns the topic object with an array of topics and their properties', () => {
+            return request(app)
+            .get('/api/topics')
+            .expect(200)
+            .then(({body}) => {
+                console.log(body)
+            })
+        });
     });
+    
 });
