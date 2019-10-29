@@ -22,8 +22,19 @@ describe('/api', () => {
         });
         describe('/topics ERRORS', () => {
             it('DELETE 405 returns method not allowed error when trying a bad method', () => {
-            
-            });
+                return request(app)
+                    .delete('/api/topics')
+                    .expect(405)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ msg: 'Delete method denied' })
+                    })
+            })
+        });
+    });
+    describe('/api/users/:username', () => {
+        //sends a user object with the properties username, avatar url and name
+        it('GET 200 returns a user obejct', () => {
+
         });
     });
 
