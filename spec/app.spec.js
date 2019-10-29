@@ -117,6 +117,17 @@ describe('/api', () => {
                     expect(article).to.not.be.an('array')
                 })
         });
+        it('PATCH 200 updates the specific article and returns the updated article', () => {
+            return request(app)
+                .patch('/api/articles/1')
+                .send({ inc_votes: 1 })
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body.updateArticle[0]).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
+                    expect(body.updateArticle[0].votes).to.eql(101)
+                    expect(body.updateArticle[0]).to.be.an('object')
+                })
+        });
         describe('/articles/:article_id ERRORS', () => {
             it('DELETE 405 returns method not allowed error', () => {
                 return request(app)
@@ -126,7 +137,7 @@ describe('/api', () => {
                         expect(body).to.eql({ msg: 'DELETE method denied' })
                     })
             });
-            it('PATCH 405 returns method not allowed error', () => {
+            xit('PATCH 405 returns method not allowed error', () => {
                 return request(app)
                     .patch('/api/articles/1')
                     .send({
@@ -160,10 +171,11 @@ describe('/api', () => {
                     .get('/api/articles/not_a_number')
                     .expect(400)
                     .then(({ body }) => {
-                        expect(body).to.eql({status: 400, msg: 'invalid input syntax for type integer: "not_a_number"'})
+                        expect(body).to.eql({ status: 400, msg: 'invalid input syntax for type integer: "not_a_number"' })
                     })
             });
         });
     });
+
 
 });

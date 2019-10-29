@@ -1,4 +1,4 @@
-const { fetchArticles } = require('../models/articlesModels');
+const { fetchArticles, patchArticle } = require('../models/articlesModels');
 
 const getArticles = (req, res, next) => {
     const { article_id } = req.params;
@@ -8,4 +8,15 @@ const getArticles = (req, res, next) => {
 }
 
 
-module.exports = { getArticles };
+const updateArticle = (req, res, next) => {
+    const { article_id } = req.params;
+    const update = req.body
+
+    patchArticle(update, article_id).then( updateArticle => {
+    //console.log(updateArticle)
+    res.status(200).json({ updateArticle })
+}).catch (next)
+}
+
+
+module.exports = { getArticles, updateArticle };

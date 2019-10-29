@@ -1,7 +1,7 @@
 const articlesRouter = require('express').Router();
-const { getArticles } = require('../controllers/articlesController.js')
+const { getArticles, updateArticle } = require('../controllers/articlesController.js')
 const { methodNotAllowed } = require('../db/utils/errorHandling')
 
-articlesRouter.route('/:article_id').get(getArticles).all(methodNotAllowed)
+articlesRouter.route('/:article_id').get(getArticles).patch(updateArticle).all(methodNotAllowed)
 
 module.exports = articlesRouter;
