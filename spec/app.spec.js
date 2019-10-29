@@ -117,10 +117,52 @@ describe('/api', () => {
                     expect(article).to.not.be.an('array')
                 })
         });
-        // describe('/articles/:article_id ERRORS', () => {
-        //     it('DELETE 405 returns method not allowed error', () => {
-        //         return request(app)
-        //     });
+        describe('/articles/:article_id ERRORS', () => {
+            it('DELETE 405 returns method not allowed error', () => {
+                return request(app)
+                    .delete('/api/articles/1')
+                    .expect(405)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ msg: 'DELETE method denied' })
+                    })
+            });
+            it('PATCH 405 returns method not allowed error', () => {
+                return request(app)
+                    .patch('/api/articles/1')
+                    .send({
+                        article_id: 1,
+                        title: 'new title',
+                        body: 'new body',
+                        votes: 100000000,
+                        topic: 'tom',
+                        author: 'tom',
+                        created_at: '2018-11-15T12:21:54.171Z',
+                        comment_count: '13'
+                    })
+                    .expect(405)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ msg: 'PATCH method denied' })
+                    })
+            });
+            it('GET 404 returns error message when the id passed does not exist', () => {
+                return request(app)
+                    .get('/api/articles/999999999')
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'Article ID does not exist'
+                        })
+                    })
+            });
+            it('GET 400 returns error message when passed an invalid article ID', () => {
+                return request(app)
+                    .get('/api/articles/not_a_number')
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({status: 400, msg: 'invalid input syntax for type integer: "not_a_number"'})
+                    })
+            });
         });
     });
 

@@ -5,7 +5,24 @@ const methodNotAllowed = (req, res, next) => {
 
 
 const customErrors = (err, req, res, next) => {
-    res.status(404).json(err)
+    if (err.status) {
+        res.status(err.status).json(err)
+    } else next(err)
 }
 
-module.exports = { methodNotAllowed, customErrors }
+
+const psqlErrors = (err, req, res, next) => {
+    if (err.code === '22P02') {
+        const message = err.message.split(' - ');
+        const error = {
+            status: 400,
+            msg: message[1]
+        }
+        res.status(400).json(error)
+
+    }
+}
+
+
+
+module.exports = { methodNotAllowed, customErrors, psqlErrors }
