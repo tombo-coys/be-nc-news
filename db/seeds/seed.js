@@ -17,7 +17,7 @@ exports.seed = function (knex) {
   const articleInsertions = knex('articles')
     .insert(formatDates(articleData))
     .returning('*')
-  // console.log('knex connection running');
+
   return knex.migrate.rollback().then(() => knex.migrate.latest()).then(() => {
     return Promise.all([topicsInsertions, usersInsertions, articleInsertions])
       .then((insertedData) => {
