@@ -37,7 +37,7 @@ const psqlErrors = (err, req, res, next) => {
 
 const allOtherErrors = (err, req, res, next) => {
 
-    console.log(err.code)
+    console.log('in all other errors')
 
 }
 

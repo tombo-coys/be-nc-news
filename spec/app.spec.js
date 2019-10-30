@@ -1,5 +1,6 @@
 process.env.NODE_ENV = "test";
-
+const chai = require("chai")
+chai.use(require("chai-sorted"))
 const { expect } = require('chai');
 const request = require('supertest');
 const app = require('../app.js');
@@ -37,7 +38,7 @@ describe('/api', () => {
                 })
         });
         describe('api/topics ERRORS', () => {
-            it('DELETE 405 returns method not allowed error when trying a bad method', () => {
+            it('ERROR DELETE 405 returns method not allowed error when trying a bad method', () => {
                 return request(app)
                     .delete('/api/topics')
                     .expect(405)
@@ -65,7 +66,7 @@ describe('/api', () => {
                 })
         });
         describe('api/users/:username ERRORS ', () => {
-            it('DELETE 405 returns method not allowed error', () => {
+            it('ERROR DELETE 405 returns method not allowed error', () => {
                 return request(app)
                     .delete('/api/users/butter_bridge')
                     .expect(405)
@@ -73,7 +74,7 @@ describe('/api', () => {
                         expect(body).to.eql({ msg: 'DELETE method denied' })
                     })
             });
-            it('PATCH 405 returns method not allowed error', () => {
+            it('ERROR PATCH 405 returns method not allowed error', () => {
                 return request(app)
                     .patch('/api/users/butter_bridge')
                     .send({
@@ -86,7 +87,7 @@ describe('/api', () => {
                         expect(body).to.eql({ msg: 'PATCH method denied' })
                     })
             })
-            it('GET 404 returns error message when the username passed doesnt exist', () => {
+            it('ERROR GET 404 returns error message when the username passed doesnt exist', () => {
                 return request(app)
                     .get('/api/users/unknownUsername')
                     .expect(404)
@@ -129,7 +130,7 @@ describe('/api', () => {
                 })
         });
         describe('/api/articles/:article_id ERRORS', () => {
-            it('DELETE 405 returns method not allowed error', () => {
+            it('ERROR DELETE 405 returns method not allowed error', () => {
                 return request(app)
                     .delete('/api/articles/1')
                     .expect(405)
@@ -137,7 +138,7 @@ describe('/api', () => {
                         expect(body).to.eql({ msg: 'DELETE method denied' })
                     })
             });
-            it('PATCH 404 returns error when patching to an ID that doesnt exist', () => {
+            it('ERROR PATCH 404 returns error when patching to an ID that doesnt exist', () => {
                 return request(app)
                     .patch('/api/articles/99999999')
                     .send({ inc_votes: 1 })
@@ -149,7 +150,7 @@ describe('/api', () => {
                         })
                     })
             });
-            it('PATCH 400 returns error when patching to an invalid article ID', () => {
+            it('ERROR PATCH 400 returns error when patching to an invalid article ID', () => {
                 return request(app)
                     .patch('/api/articles/not_a_number')
                     .send({ inc_votes: 1 })
@@ -161,7 +162,7 @@ describe('/api', () => {
                         })
                     })
             });
-            it('PATCH 400 returns error when sending an invalid key for the patch', () => {
+            it('ERROR PATCH 400 returns error when sending an invalid key for the patch', () => {
                 return request(app)
                     .patch('/api/articles/1')
                     .send({ topic: 1 })
@@ -173,7 +174,7 @@ describe('/api', () => {
                         })
                     })
             });
-            it('PATCH 400 returns error when sending an invaid value for the patch', () => {
+            it('ERROR PATCH 400 returns error when sending an invaid value for the patch', () => {
                 return request(app)
                     .patch('/api/articles/1')
                     .send({ inc_votes: 'string' })
@@ -185,7 +186,7 @@ describe('/api', () => {
                         })
                     })
             });
-            it('GET 404 returns error message when the id passed does not exist', () => {
+            it('ERROR GET 404 returns error message when the id passed does not exist', () => {
                 return request(app)
                     .get('/api/articles/999999999')
                     .expect(404)
@@ -196,7 +197,7 @@ describe('/api', () => {
                         })
                     })
             });
-            it('GET 400 returns error message when passed an invalid article ID', () => {
+            it('ERROR GET 400 returns error message when passed an invalid article ID', () => {
                 return request(app)
                     .get('/api/articles/not_a_number')
                     .expect(400)
@@ -233,80 +234,112 @@ describe('/api', () => {
                         expect(comments).to.eql([])
                     })
             });
-            describe('/api/articles/:article_id/comments ERRORS', () => {
-                it('POST 404 returns error message when the article id does not exist', () => {
-                    return request(app)
-                        .post('/api/articles/9999999/comments')
-                        .send({ username: 'butter_bridge', body: 'this is a test commment' })
-                        .expect(404)
-                        .then(({ body }) => {
-                            expect(body).to.eql({
-                                status: 404,
-                                msg: 'insert or update on table \"comments\" violates foreign key constraint \"comments_article_id_foreign\"'
-                            })
-                        })
-                });
-                it('POST 400 returns error message when the article ID is invalid', () => {
-                    return request(app)
-                        .post('/api/articles/notAnumber/comments')
-                        .send({ username: 'butter_bridge', body: 'this is a test commment' })
-                        .expect(400)
-                        .then(({ body }) => {
-                            expect(body).to.eql({
-                                status: 400,
-                                msg: "invalid input syntax for type integer: \"notAnumber\""
-                            })
-                        })
-                });
-                it('POST 400 returns error when sending an invalid key', () => {
-                    return request(app)
-                        .post('/api/articles/1/comments')
-                        .send({ name: 'butter_bridge', comment: 'this is a test commment' })
-                        .expect(400)
-                        .then(({ body }) => {
-                            expect(body).to.eql({
-                                status: 400,
-                                msg: "Bad Request: keys do not exist"
-                            })
-                        })
-                });
-                it('POST 400 returns error when username does not exist', () => {
-                    return request(app)
-                        .post('/api/articles/1/comments')
-                        .send({ username: 'tom', body: 'this is a test commment' })
-                        .expect(404)
-                        .then(({ body }) => {
-                            expect(body).to.eql({
-                                status: 404,
-                                msg: 'insert or update on table \"comments\" violates foreign key constraint \"comments_author_foreign\"'
-                            })
-                        })
-                });
-                it('GET 404 returns error message when article ID doesnt exist', () => {
-                    return request(app)
-                        .get('/api/articles/99999999/comments')
-                        .expect(404)
-                        .then(({ body }) => {
-                            expect(body).to.eql({
-                                status: 404,
-                                msg: 'Article ID does not exisit'
-                            })
-                        })
-                });
-                it('GET 400 returns error message when passed with an invalid article ID', () => {
-                    return request(app)
-                        .get('/api/articles/notanumber/comments')
-                        .expect(400)
-                        .then(({ body }) => {
-                            expect(body).to.eql({
-                                status: 400,
-                                msg: 'invalid input syntax for type integer: \"notanumber\"'
-                            })
-                        })
-                });
+            it('QUERIES GET 200 sort_by returns the comments sorted by deault to created_at column in descending order', () => {
+                return request(app)
+                    .get('/api/articles/1/comments?sort_by=created_at')
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments).to.be.descendingBy('created_at')
+                    })
             });
-            xit('QUERIES GET 200', () => {
-
+            it('QUERIES GET 200 returns the comments ordered in ascending order by the created_at column', () => {
+                return request(app)
+                    .get('/api/articles/1/comments?order=asc')
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments).to.be.ascendingBy('created_at')
+                    })
+            });
+            it('QUERIES GET 200 returns the comments ordered by comment_id in ascending order ', () => {
+                return request(app)
+                    .get('/api/articles/1/comments?sort_by=comment_id&order=asc')
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments).to.be.ascendingBy('comment_id')
+                    })
+            });
+        });
+        describe('/api/articles/:article_id/comments ERRORS', () => {
+            it('ERROR POST 404 returns error message when the article id does not exist', () => {
+                return request(app)
+                    .post('/api/articles/9999999/comments')
+                    .send({ username: 'butter_bridge', body: 'this is a test commment' })
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'insert or update on table \"comments\" violates foreign key constraint \"comments_article_id_foreign\"'
+                        })
+                    })
+            });
+            it('ERROR POST 400 returns error message when the article ID is invalid', () => {
+                return request(app)
+                    .post('/api/articles/notAnumber/comments')
+                    .send({ username: 'butter_bridge', body: 'this is a test commment' })
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: "invalid input syntax for type integer: \"notAnumber\""
+                        })
+                    })
+            });
+            it('ERROR POST 400 returns error when sending an invalid key', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ name: 'butter_bridge', comment: 'this is a test commment' })
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: "Bad Request: keys do not exist"
+                        })
+                    })
+            });
+            it('ERROR POST 400 returns error when username does not exist', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'tom', body: 'this is a test commment' })
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'insert or update on table \"comments\" violates foreign key constraint \"comments_author_foreign\"'
+                        })
+                    })
+            });
+            it('ERROR GET 404 returns error message when article ID doesnt exist', () => {
+                return request(app)
+                    .get('/api/articles/99999999/comments')
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'Article ID does not exisit'
+                        })
+                    })
+            });
+            it('ERROR GET 400 returns error message when passed with an invalid article ID', () => {
+                return request(app)
+                    .get('/api/articles/notanumber/comments')
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: 'invalid input syntax for type integer: \"notanumber\"'
+                        })
+                    })
+            });
+            it('ERROR QUERY GET 400 returns error message when trying to order by an invalid input ', () => {
+                return request(app)
+                    .get('/api/articles/1/comments?sort_by=comment_id&order=goat')
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: 'cannot order by goat'
+                        })
+                    })
             });
         });
     });

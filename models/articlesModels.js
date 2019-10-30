@@ -39,10 +39,18 @@ const sendComment = (comment, article_id) => {
 }
 
 
-const fetchCommentsForArticle = (article_id) => {
+const fetchCommentsForArticle = (article_id, sort_by, order) => {
+    // const allowedOrders = ['asc', 'desc']
+    // if (!order.includes(allowedOrders)) {
+    //     return Promise.reject({
+    //         status: 404,
+    //         msg: `Cannot order by ${order}`
+    //     })
+    // }
     const commentResponse = connection('comments')
         .select('comment_id', 'votes', 'created_at', 'author', "body")
         .where('article_id', article_id)
+        .orderBy(sort_by || "created_at", order || 'desc')
         .returning("*")
     const articleBool = checkArticleExists(article_id)
     return Promise.all([commentResponse, articleBool]).then(([commentResponse, articleBool]) => {
@@ -52,7 +60,7 @@ const fetchCommentsForArticle = (article_id) => {
             return commentResponse
         } else return Promise.reject({
             status: 404,
-            msg: 'Article ID does not exisit'
+            msg: 'Article ID does not exist'
         })
 
     })
