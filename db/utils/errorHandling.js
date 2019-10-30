@@ -19,7 +19,6 @@ const psqlErrors = (err, req, res, next) => {
             msg: message[1]
         }
         res.status(400).json(error)
-
     } else if (err.code === '23503') {
         const message = err.message.split(' - ');
         const error = {

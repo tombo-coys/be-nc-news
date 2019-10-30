@@ -1,3 +1,5 @@
+const connection = require('../connection')
+
 exports.formatDates = list => {
     if (!list.length) return [];
     return list.map(item => {
@@ -26,3 +28,11 @@ exports.formatComments = (comments, articleRef) => {
     })
     return newComments;
 };
+
+exports.checkArticleExists = (article_id) => {
+    return connection('articles').select('*').where('article_id', article_id).then((article) => {
+        if (article.length) {
+            return true
+        } else return false;
+    })
+}

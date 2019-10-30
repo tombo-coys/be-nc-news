@@ -36,7 +36,7 @@ describe('/api', () => {
                     expect(body.topics[0]).to.have.keys('slug', 'description')
                 })
         });
-        describe('/topics ERRORS', () => {
+        describe('api/topics ERRORS', () => {
             it('DELETE 405 returns method not allowed error when trying a bad method', () => {
                 return request(app)
                     .delete('/api/topics')
@@ -64,7 +64,7 @@ describe('/api', () => {
                     expect(user).to.be.an('object')
                 })
         });
-        describe('/users/:username ERRORS ', () => {
+        describe('api/users/:username ERRORS ', () => {
             it('DELETE 405 returns method not allowed error', () => {
                 return request(app)
                     .delete('/api/users/butter_bridge')
@@ -128,7 +128,7 @@ describe('/api', () => {
                     expect(body.updateArticle[0]).to.be.an('object')
                 })
         });
-        describe('/articles/:article_id ERRORS', () => {
+        describe('/api/articles/:article_id ERRORS', () => {
             it('DELETE 405 returns method not allowed error', () => {
                 return request(app)
                     .delete('/api/articles/1')
@@ -216,7 +216,24 @@ describe('/api', () => {
                         expect(returnedComment[0].author).to.eql('butter_bridge');
                     })
             });
-            describe('articles/:article_id/comments ERRORS', () => {
+            it('GET 200 retuns an array of the comments for a given article ID', () => {
+                return request(app)
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments).to.be.an('array')
+                        expect(comments[0]).to.have.keys('comment_id', 'votes', 'created_at', 'author', "body")
+                    })
+            });
+            it('GET 200 returns an empty array when the article exists with no comments attached', () => {
+                return request(app)
+                    .get('/api/articles/2/comments')
+                    .expect(200)
+                    .then(({ body: { comments } }) => {
+                        expect(comments).to.eql([])
+                    })
+            });
+            describe('/api/articles/:article_id/comments ERRORS', () => {
                 it('POST 404 returns error message when the article id does not exist', () => {
                     return request(app)
                         .post('/api/articles/9999999/comments')
@@ -265,6 +282,31 @@ describe('/api', () => {
                             })
                         })
                 });
+                it('GET 404 returns error message when article ID doesnt exist', () => {
+                    return request(app)
+                        .get('/api/articles/99999999/comments')
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(body).to.eql({
+                                status: 404,
+                                msg: 'Article ID does not exisit'
+                            })
+                        })
+                });
+                it('GET 400 returns error message when passed with an invalid article ID', () => {
+                    return request(app)
+                        .get('/api/articles/notanumber/comments')
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body).to.eql({
+                                status: 400,
+                                msg: 'invalid input syntax for type integer: \"notanumber\"'
+                            })
+                        })
+                });
+            });
+            xit('QUERIES GET 200', () => {
+
             });
         });
     });

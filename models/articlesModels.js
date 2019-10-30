@@ -1,4 +1,5 @@
 const connection = require('../db/connection')
+const { checkArticleExists } = require('../db/utils/utils')
 
 const fetchArticles = (article_id) => {
     return connection('articles').select('articles.*').where("articles.article_id", article_id)
@@ -37,4 +38,24 @@ const sendComment = (comment, article_id) => {
     return connection('comments').insert(comment).returning('*')
 }
 
-module.exports = { fetchArticles, patchArticle, sendComment };
+
+const fetchCommentsForArticle = (article_id) => {
+    const commentResponse = connection('comments')
+        .select('comment_id', 'votes', 'created_at', 'author', "body")
+        .where('article_id', article_id)
+        .returning("*")
+    const articleBool = checkArticleExists(article_id)
+    return Promise.all([commentResponse, articleBool]).then(([commentResponse, articleBool]) => {
+        if (commentResponse.length) {
+            return commentResponse
+        } else if (!commentResponse.length && articleBool) {
+            return commentResponse
+        } else return Promise.reject({
+            status: 404,
+            msg: 'Article ID does not exisit'
+        })
+
+    })
+}
+
+module.exports = { fetchArticles, patchArticle, sendComment, fetchCommentsForArticle };
