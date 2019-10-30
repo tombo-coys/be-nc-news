@@ -205,7 +205,18 @@ describe('/api', () => {
                     })
             });
         });
+        describe('/api/articles/:article_id/comments', () => {
+            it('POST 201 accepts an object with the correct properties', () => {
+                return request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'butter_bridge', body: 'this is a test commment' })
+                    .expect(201)
+                    .then(({ body: { returnedComment } }) => {
+                        expect(returnedComment[0].body).to.eql('this is a test commment');
+                        expect(returnedComment[0].author).to.eql('butter_bridge');
+                    })
+            });
+        });
     });
-
 
 });

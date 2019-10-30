@@ -14,7 +14,7 @@ const fetchArticles = (article_id) => {
 }
 
 const patchArticle = (update, article_id) => {
-    if(update.inc_votes){
+    if (update.inc_votes) {
         return connection('articles').where('article_id', article_id).increment('votes', update.inc_votes)
             .returning('*')
             .then((updatedArticle) => {
@@ -24,9 +24,17 @@ const patchArticle = (update, article_id) => {
                 })
                 else return updatedArticle
             });
-    } else return Promise.reject({ status: 400,
-        msg: 'Bad Request: You cannot update that key, only votes'})
+    } else return Promise.reject({
+        status: 400,
+        msg: 'Bad Request: You cannot update that key, only votes'
+    })
 }
 
+const sendComment = (comment, article_id) => {
+    comment.author = comment.username;
+    delete comment.username
+    comment.article_id = article_id
+    return connection('comments').insert(comment).returning('*')
+}
 
-module.exports = { fetchArticles, patchArticle };
+module.exports = { fetchArticles, patchArticle, sendComment };
