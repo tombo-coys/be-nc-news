@@ -21,7 +21,7 @@ const psqlErrors = (err, req, res, next) => {
         res.status(400).json(error)
 
     }
-    else console.log('at the bottom of the PSQL error handler')
+    else console.log('at bottom of psql errors')
 }
 
 

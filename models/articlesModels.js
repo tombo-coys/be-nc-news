@@ -14,7 +14,19 @@ const fetchArticles = (article_id) => {
 }
 
 const patchArticle = (update, article_id) => {
-    return connection('articles').where('article_id', article_id).increment('votes', update.inc_votes).returning('*');
+    if(update.inc_votes){
+        return connection('articles').where('article_id', article_id).increment('votes', update.inc_votes)
+            .returning('*')
+            .then((updatedArticle) => {
+                if (!updatedArticle.length) return Promise.reject({
+                    status: 404,
+                    msg: 'Article ID does not exist'
+                })
+                else return updatedArticle
+            });
+    } else return Promise.reject({ status: 400,
+        msg: 'Bad Request: You cannot update that key, only votes'})
 }
+
 
 module.exports = { fetchArticles, patchArticle };

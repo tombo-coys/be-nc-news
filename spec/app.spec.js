@@ -12,7 +12,7 @@ describe('/api', () => {
         return connection.seed.run();
     })
     describe('/api/topics', () => {
-        it('GET 200, returns the topic object with an array of topics and their properties', () => {
+        it('GET 200, returns the topic object with the correct key', () => {
             return request(app)
                 .get('/api/topics')
                 .expect(200)
@@ -28,7 +28,7 @@ describe('/api', () => {
                     expect(body.topics).to.be.an('array')
                 })
         });
-        it('GET 200, returns an aray of objects with the correct keys', () => {
+        it('GET 200, returns an aray of objects with the topic keys', () => {
             return request(app)
                 .get('/api/topics')
                 .expect(200)
@@ -48,7 +48,7 @@ describe('/api', () => {
         });
     });
     describe('/api/users/:username', () => {
-        it('GET 200 returns a user obejct with three correct keys', () => {
+        it('GET 200 returns a user obejct with three correct keys for username', () => {
             return request(app)
                 .get('/api/users/butter_bridge')
                 .expect(200)
@@ -100,7 +100,7 @@ describe('/api', () => {
         });
     });
     describe('/api/articles/:article_id', () => {
-        it('GET 200 returns an article object with the correct keys', () => {
+        it('GET 200 returns an article object with the specific keys for articleID', () => {
             return request(app)
                 .get('/api/articles/1')
                 .expect(200)
@@ -120,11 +120,11 @@ describe('/api', () => {
         it('PATCH 200 updates the specific article and returns the updated article', () => {
             return request(app)
                 .patch('/api/articles/1')
-                .send({ inc_votes: 1 })
+                .send({ inc_votes: -1 })
                 .expect(200)
                 .then(({ body }) => {
                     expect(body.updateArticle[0]).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
-                    expect(body.updateArticle[0].votes).to.eql(101)
+                    expect(body.updateArticle[0].votes).to.eql(99)
                     expect(body.updateArticle[0]).to.be.an('object')
                 })
         });
@@ -137,22 +137,52 @@ describe('/api', () => {
                         expect(body).to.eql({ msg: 'DELETE method denied' })
                     })
             });
-            xit('PATCH 405 returns method not allowed error', () => {
+            it('PATCH 404 returns error when patching to an ID that doesnt exist', () => {
+                return request(app)
+                    .patch('/api/articles/99999999')
+                    .send({ inc_votes: 1 })
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'Article ID does not exist'
+                        })
+                    })
+            });
+            it('PATCH 400 returns error when patching to an invalid article ID', () => {
+                return request(app)
+                    .patch('/api/articles/not_a_number')
+                    .send({ inc_votes: 1 })
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: "invalid input syntax for type integer: \"not_a_number\""
+                        })
+                    })
+            });
+            it('PATCH 400 returns error when sending an invalid key for the patch', () => {
                 return request(app)
                     .patch('/api/articles/1')
-                    .send({
-                        article_id: 1,
-                        title: 'new title',
-                        body: 'new body',
-                        votes: 100000000,
-                        topic: 'tom',
-                        author: 'tom',
-                        created_at: '2018-11-15T12:21:54.171Z',
-                        comment_count: '13'
-                    })
-                    .expect(405)
+                    .send({ topic: 1 })
+                    .expect(400)
                     .then(({ body }) => {
-                        expect(body).to.eql({ msg: 'PATCH method denied' })
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: "Bad Request: You cannot update that key, only votes"
+                        })
+                    })
+            });
+            it('PATCH 400 returns error when sending an invaid value for the patch', () => {
+                return request(app)
+                    .patch('/api/articles/1')
+                    .send({ inc_votes: 'string' })
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: "invalid input syntax for type integer: \"NaN\""
+                        })
                     })
             });
             it('GET 404 returns error message when the id passed does not exist', () => {
