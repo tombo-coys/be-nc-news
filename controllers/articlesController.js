@@ -22,7 +22,7 @@ const postComment = (req, res, next) => {
     const { article_id } = req.params;
     sendComment(comment, article_id).then(returnedComment => {
         res.status(201).json({ returnedComment })
-    })
+    }).catch(next)
 }
 
 

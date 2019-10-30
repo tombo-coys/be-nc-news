@@ -216,6 +216,56 @@ describe('/api', () => {
                         expect(returnedComment[0].author).to.eql('butter_bridge');
                     })
             });
+            describe('articles/:article_id/comments ERRORS', () => {
+                it('POST 404 returns error message when the article id does not exist', () => {
+                    return request(app)
+                        .post('/api/articles/9999999/comments')
+                        .send({ username: 'butter_bridge', body: 'this is a test commment' })
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(body).to.eql({
+                                status: 404,
+                                msg: 'insert or update on table \"comments\" violates foreign key constraint \"comments_article_id_foreign\"'
+                            })
+                        })
+                });
+                it('POST 400 returns error message when the article ID is invalid', () => {
+                    return request(app)
+                        .post('/api/articles/notAnumber/comments')
+                        .send({ username: 'butter_bridge', body: 'this is a test commment' })
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body).to.eql({
+                                status: 400,
+                                msg: "invalid input syntax for type integer: \"notAnumber\""
+                            })
+                        })
+                });
+                it('POST 400 returns error when sending an invalid key', () => {
+                    return request(app)
+                        .post('/api/articles/1/comments')
+                        .send({ name: 'butter_bridge', comment: 'this is a test commment' })
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body).to.eql({
+                                status: 400,
+                                msg: "Bad Request: keys do not exist"
+                            })
+                        })
+                });
+                it('POST 400 returns error when username does not exist', () => {
+                    return request(app)
+                        .post('/api/articles/1/comments')
+                        .send({ username: 'tom', body: 'this is a test commment' })
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(body).to.eql({
+                                status: 404,
+                                msg: 'insert or update on table \"comments\" violates foreign key constraint \"comments_author_foreign\"'
+                            })
+                        })
+                });
+            });
         });
     });
 
