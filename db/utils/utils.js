@@ -36,3 +36,19 @@ exports.checkArticleExists = (article_id) => {
         } else return false;
     })
 }
+
+exports.checkUserExists = (author) => {
+    return connection('users').select('*').where('username', author).then((author) => {
+        if (author.length) {
+            return true
+        } else return false;
+    })
+}
+
+exports.checkTopicExists = (topic => {
+    return connection('topics').select('*').where('slug', topic).then((topic) => {
+        if (topic.length) {
+            return true
+        } else return false
+    })
+})

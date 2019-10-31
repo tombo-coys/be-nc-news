@@ -44,7 +44,7 @@ const psqlErrors = (err, req, res, next) => {
 }
 
 const allOtherErrors = (err, req, res, next) => {
-
+console.log(err)
     console.log('in all other errors and something has gone very wrong!')
     res.status(500).json({msg : 'arrrrhg'})
 
