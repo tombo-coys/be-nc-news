@@ -1,4 +1,4 @@
-const { fetchArticles, patchArticle, sendComment, fetchCommentsForArticle } = require('../models/articlesModels');
+const { fetchArticles, patchArticle, sendComment, fetchCommentsForArticle, fetchAllArticles } = require('../models/articlesModels');
 
 const getArticles = (req, res, next) => {
     const { article_id } = req.params;
@@ -26,12 +26,23 @@ const postComment = (req, res, next) => {
 }
 
 const getCommentsForArticle = (req, res, next) => {
+
     const { sort_by, order } = req.query
     const { article_id } = req.params;
     fetchCommentsForArticle(article_id, sort_by, order).then(comments => {
+
         res.status(200).json({ comments })
     }).catch(next)
 }
 
+const getAllArticles = (req, res, next) => {
+    
+    const { sort_by, order, author, topic } = req.query
 
-module.exports = { getArticles, updateArticle, postComment, getCommentsForArticle };
+    fetchAllArticles(sort_by, order, author, topic).then(returnedArticles => {
+        res.status(200).json({ returnedArticles })
+    }).catch(next)
+}
+
+
+module.exports = { getArticles, updateArticle, postComment, getCommentsForArticle, getAllArticles };

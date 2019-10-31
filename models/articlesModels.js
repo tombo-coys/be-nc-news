@@ -40,13 +40,14 @@ const sendComment = (comment, article_id) => {
 
 
 const fetchCommentsForArticle = (article_id, sort_by, order) => {
-    // const allowedOrders = ['asc', 'desc']
-    // if (!order.includes(allowedOrders)) {
-    //     return Promise.reject({
-    //         status: 404,
-    //         msg: `Cannot order by ${order}`
-    //     })
-    // }
+
+    const allowedOrders = ['asc', 'desc', undefined];
+    if (!allowedOrders.includes(order)) {
+        return Promise.reject({
+            status: 400,
+            msg: `cannot order by ${order}, only ascending or descending`
+        })
+    }
     const commentResponse = connection('comments')
         .select('comment_id', 'votes', 'created_at', 'author', "body")
         .where('article_id', article_id)
@@ -66,4 +67,17 @@ const fetchCommentsForArticle = (article_id, sort_by, order) => {
     })
 }
 
-module.exports = { fetchArticles, patchArticle, sendComment, fetchCommentsForArticle };
+const fetchAllArticles = (sort_by, order, author, topic) => {
+    return connection('articles')
+        .select('articles.article_id', 'articles.author', 'articles.title', 'articles.topic', 'articles.created_at', 'articles.votes')
+        .leftJoin('comments', "articles.article_id", 'comments.article_id')
+        .count('comment_id as comment_count')
+        .groupBy('articles.article_id')
+        .orderBy(sort_by || "created_at", order || 'desc')
+        .modify((query) => {
+            if (author) query.where('articles.author', author);
+            if (topic) query.where('articles.topic', topic)
+        })
+}
+
+module.exports = { fetchArticles, patchArticle, sendComment, fetchCommentsForArticle, fetchAllArticles };
