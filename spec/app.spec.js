@@ -105,40 +105,40 @@ describe('/api', () => {
             return request(app)
                 .get('/api/articles')
                 .expect(200)
-                .then(({ body: { returnedArticles } }) => {
-                    expect(returnedArticles).to.be.an('array')
+                .then(({ body: { articles } }) => {
+                    expect(articles).to.be.an('array')
                 })
         });
         it('GET 200 returns an array of objects that have the specified article keys', () => {
             return request(app)
                 .get('/api/articles')
                 .expect(200)
-                .then(({ body: { returnedArticles } }) => {
-                    expect(returnedArticles[0]).to.have.keys('article_id', 'author', 'title', 'topic', 'created_at', 'votes', 'comment_count')
+                .then(({ body: { articles } }) => {
+                    expect(articles[0]).to.have.keys('article_id', 'author', 'title', 'topic', 'created_at', 'votes', 'comment_count')
                 })
         });
         it('QUERIES GET 200 sorts the articles, defaulting to created_at in descending order', () => {
             return request(app)
                 .get('/api/articles?sort_by=created_at')
                 .expect(200)
-                .then(({ body: { returnedArticles } }) => {
-                    expect(returnedArticles).to.be.descendingBy('created_at')
+                .then(({ body: { articles } }) => {
+                    expect(articles).to.be.descendingBy('created_at')
                 })
         });
         it('QUERIES GET 200 sorts the articles by article_id in ascending order', () => {
             return request(app)
                 .get('/api/articles?sort_by=article_id&order=asc')
                 .expect(200)
-                .then(({ body: { returnedArticles } }) => {
-                    expect(returnedArticles).to.be.ascendingBy('article_id')
+                .then(({ body: { articles } }) => {
+                    expect(articles).to.be.ascendingBy('article_id')
                 })
         });
         it('QUERIES GET 200 filters articles by the username value specified', () => {
             return request(app)
                 .get('/api/articles?author=icellusedkars')
                 .expect(200)
-                .then(({ body: { returnedArticles } }) => {
-                    returnedArticles.forEach(article => {
+                .then(({ body: { articles } }) => {
+                    articles.forEach(article => {
                         expect(article.author).to.eql('icellusedkars')
                     });
                 })
@@ -147,8 +147,8 @@ describe('/api', () => {
             return request(app)
                 .get('/api/articles?topic=mitch')
                 .expect(200)
-                .then(({ body: { returnedArticles } }) => {
-                    returnedArticles.forEach(article => {
+                .then(({ body: { articles } }) => {
+                    articles.forEach(article => {
                         expect(article.topic).to.eql('mitch')
                     });
                 })
@@ -157,8 +157,8 @@ describe('/api', () => {
             return request(app)
                 .get('/api/articles?topic=mitch&author=icellusedkars')
                 .expect(200)
-                .then(({ body: { returnedArticles } }) => {
-                    returnedArticles.forEach(article => {
+                .then(({ body: { articles } }) => {
+                    articles.forEach(article => {
                         expect(article.topic).to.eql('mitch')
                         expect(article.author).to.eql('icellusedkars')
                     });
@@ -280,10 +280,10 @@ describe('/api', () => {
                 .patch('/api/articles/1')
                 .send({ inc_votes: -1 })
                 .expect(200)
-                .then(({ body }) => {
-                    expect(body.updateArticle[0]).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
-                    expect(body.updateArticle[0].votes).to.eql(99)
-                    expect(body.updateArticle[0]).to.be.an('object')
+                .then(({ body: { article } }) => {
+                    expect(article[0]).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
+                    expect(article[0].votes).to.eql(99)
+                    expect(article[0]).to.be.an('object')
                 })
         });
         describe('/api/articles/:article_id ERRORS', () => {
@@ -369,9 +369,9 @@ describe('/api', () => {
                     .post('/api/articles/1/comments')
                     .send({ username: 'butter_bridge', body: 'this is a test commment' })
                     .expect(201)
-                    .then(({ body: { returnedComment } }) => {
-                        expect(returnedComment[0].body).to.eql('this is a test commment');
-                        expect(returnedComment[0].author).to.eql('butter_bridge');
+                    .then(({ body: { comment } }) => {
+                        expect(comment[0].body).to.eql('this is a test commment');
+                        expect(comment[0].author).to.eql('butter_bridge');
                     })
             });
             it('GET 200 retuns an array of the comments for a given article ID', () => {
@@ -534,9 +534,9 @@ describe('/api', () => {
                 .patch('/api/comments/1')
                 .send({ inc_votes: -1 })
                 .expect(200)
-                .then(({ body: { updatedComment } }) => {
-                    expect(updatedComment[0]).to.have.keys('comment_id', 'author', 'article_id', "votes", 'body', 'created_at')
-                    expect(updatedComment[0].votes).to.eql(15)
+                .then(({ body: { comment } }) => {
+                    expect(comment[0]).to.have.keys('comment_id', 'author', 'article_id', "votes", 'body', 'created_at')
+                    expect(comment[0].votes).to.eql(15)
                 })
         });
         it('DELETE 204 deletes the comment specified in the comment ID parameter', () => {
@@ -617,11 +617,11 @@ describe('/api', () => {
             });
             it('ERROR DElETE 404 returns error message when the comment_id doesnt exist ', () => {
                 return request(app)
-                .delete('/api/comments/9999')
-                .expect(404)
-                .then(({ body }) => {
-                    expect(body).to.eql({ status: 404, msg: 'Comment ID does not exist' })
-                })
+                    .delete('/api/comments/9999')
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ status: 404, msg: 'Comment ID does not exist' })
+                    })
             });
         });
     });

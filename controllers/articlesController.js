@@ -12,16 +12,16 @@ const updateArticle = (req, res, next) => {
     const { article_id } = req.params;
     const update = req.body
 
-    patchArticle(update, article_id).then(updateArticle => {
-        res.status(200).json({ updateArticle })
+    patchArticle(update, article_id).then(article => {
+        res.status(200).json({ article })
     }).catch(next)
 }
 
 const postComment = (req, res, next) => {
     const comment = req.body;
     const { article_id } = req.params;
-    sendComment(comment, article_id).then(returnedComment => {
-        res.status(201).json({ returnedComment })
+    sendComment(comment, article_id).then(comment => {
+        res.status(201).json({ comment })
     }).catch(next)
 }
 
@@ -36,11 +36,11 @@ const getCommentsForArticle = (req, res, next) => {
 }
 
 const getAllArticles = (req, res, next) => {
-    
+
     const { sort_by, order, author, topic } = req.query
 
-    fetchAllArticles(sort_by, order, author, topic).then(returnedArticles => {
-        res.status(200).json({ returnedArticles })
+    fetchAllArticles(sort_by, order, author, topic).then(articles => {
+        res.status(200).json({ articles })
     }).catch(next)
 }
 
