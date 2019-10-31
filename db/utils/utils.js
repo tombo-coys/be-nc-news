@@ -52,3 +52,11 @@ exports.checkTopicExists = (topic => {
         } else return false
     })
 })
+
+exports.checkCommentExists = comment_id => {
+    return connection('comments').select('*').where('comment_id', comment_id).then((comment) => {
+        if (comment.length) {
+            return true
+        } else return false
+    })
+}

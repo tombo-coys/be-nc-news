@@ -211,12 +211,11 @@ describe('/api', () => {
                         })
                     })
             });
-            it.only('ERROR QUERY GET  404 returns an error message when filtering on an author that doesnt exist', () => {
+            it('ERROR QUERY GET  404 returns an error message when filtering on an author that doesnt exist', () => {
                 return request(app)
                     .get('/api/articles?author=goat')
                     .expect(404)
                     .then(({ body }) => {
-                        console.log(body)
                         expect(body).to.eql({
                             status: 404,
                             msg: 'Author does not exist'
@@ -226,6 +225,28 @@ describe('/api', () => {
             it('ERROR QUERY GET 404 returns an error message when filtering on a topic that doesnt exist', () => {
                 return request(app)
                     .get('/api/articles?topic=tottenham')
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'Topic does not exist'
+                        })
+                    })
+            });
+            it('ERROR QUERY GET 404 returns an error message when filtering on a topic that DOES exist but with an author that DOESNT exist', () => {
+                return request(app)
+                    .get('/api/articles?topic=mitch&author=tom')
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 404,
+                            msg: 'Author does not exist'
+                        })
+                    })
+            });
+            it('ERROR QUERY GET 404 returns an error message when filtering on an author that DOES exist but with an topic that DOESNT exist', () => {
+                return request(app)
+                    .get('/api/articles?topic=tom&author=icellusedkars')
                     .expect(404)
                     .then(({ body }) => {
                         expect(body).to.eql({
@@ -507,5 +528,101 @@ describe('/api', () => {
             });
         });
     });
-
+    describe('/api/comments/:comment_id', () => {
+        it('PATCH 200 updates the comment with a new vote value and returns the updated comment', () => {
+            return request(app)
+                .patch('/api/comments/1')
+                .send({ inc_votes: -1 })
+                .expect(200)
+                .then(({ body: { updatedComment } }) => {
+                    expect(updatedComment[0]).to.have.keys('comment_id', 'author', 'article_id', "votes", 'body', 'created_at')
+                    expect(updatedComment[0].votes).to.eql(15)
+                })
+        });
+        it('DELETE 204 deletes the comment specified in the comment ID parameter', () => {
+            return request(app)
+                .delete('/api/comments/1')
+                .expect(204)
+                .then(({ body }) => {
+                    expect(body).to.eql({})
+                })
+        });
+        describe('/api/comments/:comment_id ERRORS', () => {
+            it('ERROR PATCH 404 returns error when comment_id doesnt exist', () => {
+                return request(app)
+                    .patch('/api/comments/9999999')
+                    .send({ inc_votes: -1 })
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ status: 404, msg: 'Comment does not exist' })
+                    })
+            });
+            it('ERROR PATCH 404 returns error when the comment_id is invalid', () => {
+                return request(app)
+                    .patch('/api/comments/bananna')
+                    .send({ inc_votes: -1 })
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ status: 400, msg: '$1 where \"comment_id\" = $2 returning *' })
+                    })
+            });
+            it('ERROR PATCH 400 returns error when the wrong key is passed ', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ topic: 1 })
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: "Bad Request: You cannot update that key, only votes"
+                        })
+                    })
+            });
+            it('ERROR PATCH 400 returns error when passed the wrong value i.e. a string', () => {
+                return request(app)
+                    .patch('/api/comments/1')
+                    .send({ inc_votes: 'string' })
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({
+                            status: 400,
+                            msg: "invalid input syntax for type integer: \"NaN\""
+                        })
+                    })
+            });
+            it('ERROR GET 405 returns error message when method is not allowed', () => {
+                return request(app)
+                    .get('/api/comments/1')
+                    .expect(405)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ msg: 'GET method denied' })
+                    })
+            });
+            it('ERROR POST 405 returns error message when method is now allowed', () => {
+                return request(app)
+                    .post('/api/comments/1')
+                    .send({ votes: 0 })
+                    .expect(405)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ msg: 'POST method denied' })
+                    })
+            });
+            it('ERROR DELETE 400 returns error message when passing an invalid id', () => {
+                return request(app)
+                    .delete('/api/comments/bananna')
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body).to.eql({ status: 400, msg: 'invalid input syntax for type integer: \"bananna\"' })
+                    })
+            });
+            it('ERROR DElETE 404 returns error message when the comment_id doesnt exist ', () => {
+                return request(app)
+                .delete('/api/comments/9999')
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body).to.eql({ status: 404, msg: 'Comment ID does not exist' })
+                })
+            });
+        });
+    });
 });

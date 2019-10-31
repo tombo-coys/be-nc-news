@@ -40,7 +40,6 @@ const sendComment = (comment, article_id) => {
 
 
 const fetchCommentsForArticle = (article_id, sort_by, order) => {
-
     const allowedOrders = ['asc', 'desc', undefined];
     if (!allowedOrders.includes(order)) {
         return Promise.reject({
@@ -75,7 +74,6 @@ const fetchAllArticles = (sort_by, order, author, topic) => {
             msg: `cannot order by ${order}, only ascending or descending`
         })
     }
-
     const articleResponse = connection('articles')
         .select('articles.article_id', 'articles.author', 'articles.title', 'articles.topic', 'articles.created_at', 'articles.votes')
         .leftJoin('comments', "articles.article_id", 'comments.article_id')
@@ -94,13 +92,12 @@ const fetchAllArticles = (sort_by, order, author, topic) => {
     if (topic) {
         topicBool = checkTopicExists(topic)
     }
-
     return Promise.all([articleResponse, authorBool, topicBool]).then(([articleResponse, authorBool, topicBool]) => {
         if (articleResponse.length) {
             return articleResponse
         } else if (!articleResponse.length && authorBool && topicBool) {
             return articleResponse
-        } else if (!articleResponse.length && topicBool) {
+        } else if (!articleResponse.length && topicBool && !author) {
             console.log('gets here')
             return articleResponse;
         } else if (!articleResponse.length && !topicBool) {

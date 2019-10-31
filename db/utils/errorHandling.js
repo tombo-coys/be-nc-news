@@ -12,7 +12,7 @@ const customErrors = (err, req, res, next) => {
 
 
 const psqlErrors = (err, req, res, next) => {
-    if (err.code === '22P02') {
+    if (err.code === '22P02' && err.routine === 'pg_strtoint32') {
         const message = err.message.split(' - ');
         const error = {
             status: 400,
@@ -44,10 +44,8 @@ const psqlErrors = (err, req, res, next) => {
 }
 
 const allOtherErrors = (err, req, res, next) => {
-console.log(err)
-    console.log('in all other errors and something has gone very wrong!')
-    res.status(500).json({msg : 'arrrrhg'})
-
+    console.log(err)
+    res.status(500).json({ msg: 'server error! something has gone very wrong!' })
 }
 
 
