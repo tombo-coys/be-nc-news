@@ -68,6 +68,13 @@ const fetchCommentsForArticle = (article_id, sort_by, order) => {
 }
 
 const fetchAllArticles = (sort_by, order, author, topic) => {
+    const allowedOrders = ['asc', 'desc', undefined];
+    if (!allowedOrders.includes(order)) {
+        return Promise.reject({
+            status: 400,
+            msg: `cannot order by ${order}, only ascending or descending`
+        })
+    }
     return connection('articles')
         .select('articles.article_id', 'articles.author', 'articles.title', 'articles.topic', 'articles.created_at', 'articles.votes')
         .leftJoin('comments', "articles.article_id", 'comments.article_id')

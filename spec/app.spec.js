@@ -202,13 +202,12 @@ describe('/api', () => {
             });
             it('ERROR GET 404 returns error message when filtering on an author that doesnt exist', () => {
                 return request(app)
-                .get('/api/articles?author=tom')
-                .expect(404)
+                .get('/api/articles?order=goat')
+                .expect(400)
                 .then(({ body }) => {
-                    console.log(body)
                     expect(body).to.eql({
-                        status: 404,
-                        msg: 'column \"badColname\" does not exist'
+                        status: 400,
+                        msg: 'cannot order by goat, only ascending or descending'
                     })
                 })
             });
