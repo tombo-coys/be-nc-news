@@ -23,12 +23,13 @@ const patchArticle = (update, article_id) => {
                     status: 404,
                     msg: 'Article ID does not exist'
                 })
-                else return updatedArticle
+                else return updatedArticle[0]
             });
-    } else return Promise.reject({
-        status: 400,
-        msg: 'Bad Request: You cannot update that key, only votes'
-    })
+    } else return connection('articles').where('article_id', article_id).returning('*')
+    // Promise.reject({
+    //     status: 400,
+    //     msg: 'Bad Request: You cannot update that key, only votes'
+    // })
 }
 
 const sendComment = (comment, article_id) => {

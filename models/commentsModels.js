@@ -9,12 +9,15 @@ const patchComment = (comment, comment_id) => {
                     status: 404,
                     msg: 'Comment does not exist'
                 })
-                else return returnedComment
+                else return returnedComment[0]
             })
-    } else return Promise.reject({
-        status: 400,
-        msg: "Bad Request: You cannot update that key, only votes"
+    } else return connection('comments').where('comment_id', comment_id).then((comment) => {
+        return comment[0]
     })
+    // return Promise.reject({
+    //     status: 400,
+    //     msg: "Bad Request: You cannot update that key, only votes"
+    // })
 
 }
 

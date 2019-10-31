@@ -192,10 +192,10 @@ describe('/api', () => {
             it('ERROR QUERY GET 404 returns error message when sorting by an invalid column name ', () => {
                 return request(app)
                     .get('/api/articles?sort_by=badColname')
-                    .expect(404)
+                    .expect(400)
                     .then(({ body }) => {
                         expect(body).to.eql({
-                            status: 404,
+                            status: 400,
                             msg: 'column \"badColname\" does not exist'
                         })
                     })
@@ -281,8 +281,19 @@ describe('/api', () => {
                 .send({ inc_votes: -1 })
                 .expect(200)
                 .then(({ body: { article } }) => {
+                    expect(article).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
+                    expect(article.votes).to.eql(99)
+                    expect(article).to.be.an('object')
+                })
+        });
+        it('PATCH 200 if the update does not have any information in the request body, send the unchanged article ', () => {
+            return request(app)
+                .patch('/api/articles/1')
+                .send({})
+                .expect(200)
+                .then(({ body: { article } }) => {
                     expect(article[0]).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
-                    expect(article[0].votes).to.eql(99)
+                    expect(article[0].votes).to.eql(100)
                     expect(article[0]).to.be.an('object')
                 })
         });
@@ -319,18 +330,18 @@ describe('/api', () => {
                         })
                     })
             });
-            it('ERROR PATCH 400 returns error when sending an invalid key for the patch', () => {
-                return request(app)
-                    .patch('/api/articles/1')
-                    .send({ topic: 1 })
-                    .expect(400)
-                    .then(({ body }) => {
-                        expect(body).to.eql({
-                            status: 400,
-                            msg: "Bad Request: You cannot update that key, only votes"
-                        })
-                    })
-            });
+            // it('ERROR PATCH 400 returns error when sending an invalid key for the patch', () => {
+            //     return request(app)
+            //         .patch('/api/articles/1')
+            //         .send({ topic: 1 })
+            //         .expect(400)
+            //         .then(({ body }) => {
+            //             expect(body).to.eql({
+            //                 status: 400,
+            //                 msg: "Bad Request: You cannot update that key, only votes"
+            //             })
+            //         })
+            // });
             it('ERROR PATCH 400 returns error when sending an invaid value for the patch', () => {
                 return request(app)
                     .patch('/api/articles/1')
@@ -498,13 +509,13 @@ describe('/api', () => {
                         })
                     })
             });
-            it('ERROR QUERY GET 404 returns error when sorting by an invalid column', () => {
+            it('ERROR QUERY GET 400 returns error when sorting by an invalid column', () => {
                 return request(app)
                     .get('/api/articles/1/comments?sort_by=goat')
-                    .expect(404)
+                    .expect(400)
                     .then(({ body }) => {
                         expect(body).to.eql({
-                            status: 404,
+                            status: 400,
                             msg: 'column \"goat\" does not exist'
                         })
                     })
@@ -534,9 +545,19 @@ describe('/api', () => {
                 .patch('/api/comments/1')
                 .send({ inc_votes: -1 })
                 .expect(200)
+                .then(({ body: {comment} }) => {
+                    expect(comment).to.have.keys('comment_id', 'author', 'article_id', "votes", 'body', 'created_at')
+                    expect(comment.votes).to.eql(15)
+                })
+        });
+        it('PATCH 200 returns an unchanged comment when sent a body with no inc_votes property ', () => {
+            return request(app)
+                .patch('/api/comments/1')
+                .send({})
+                .expect(200)
                 .then(({ body: { comment } }) => {
-                    expect(comment[0]).to.have.keys('comment_id', 'author', 'article_id', "votes", 'body', 'created_at')
-                    expect(comment[0].votes).to.eql(15)
+                    expect(comment).to.have.keys('comment_id', 'author', 'article_id', "votes", 'body', 'created_at')
+                    expect(comment.votes).to.eql(16)
                 })
         });
         it('DELETE 204 deletes the comment specified in the comment ID parameter', () => {
@@ -566,18 +587,18 @@ describe('/api', () => {
                         expect(body).to.eql({ status: 400, msg: '$1 where \"comment_id\" = $2 returning *' })
                     })
             });
-            it('ERROR PATCH 400 returns error when the wrong key is passed ', () => {
-                return request(app)
-                    .patch('/api/comments/1')
-                    .send({ topic: 1 })
-                    .expect(400)
-                    .then(({ body }) => {
-                        expect(body).to.eql({
-                            status: 400,
-                            msg: "Bad Request: You cannot update that key, only votes"
-                        })
-                    })
-            });
+            // it('ERROR PATCH 400 returns error when the wrong key is passed ', () => {
+            //     return request(app)
+            //         .patch('/api/comments/1')
+            //         .send({ topic: 1 })
+            //         .expect(400)
+            //         .then(({ body }) => {
+            //             expect(body).to.eql({
+            //                 status: 400,
+            //                 msg: "Bad Request: You cannot update that key, only votes"
+            //             })
+            //         })
+            // });
             it('ERROR PATCH 400 returns error when passed the wrong value i.e. a string', () => {
                 return request(app)
                     .patch('/api/comments/1')

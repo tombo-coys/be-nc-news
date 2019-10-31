@@ -13,7 +13,7 @@ const updateArticle = (req, res, next) => {
     const update = req.body
 
     patchArticle(update, article_id).then(article => {
-        res.status(200).json({ article })
+        res.status(200).json( {article} )
     }).catch(next)
 }
 

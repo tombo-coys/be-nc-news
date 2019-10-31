@@ -12,6 +12,7 @@ const customErrors = (err, req, res, next) => {
 
 
 const psqlErrors = (err, req, res, next) => {
+   // console.log(err)
     if (err.code === '22P02' && err.routine === 'pg_strtoint32') {
         const message = err.message.split(' - ');
         const error = {
@@ -36,10 +37,10 @@ const psqlErrors = (err, req, res, next) => {
     } else if (err.code === '42703') {
         const message = err.message.split(' - ');
         const error = {
-            status: 404,
+            status: 400,
             msg: message[1]
         }
-        res.status(404).json(error)
+        res.status(400).json(error)
     } else next(err)
 }
 
