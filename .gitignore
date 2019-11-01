@@ -3,3 +3,5 @@ knexfile.js
 README.md
 output.txt
 querybuilder.sql
+error-handling.md
+hosting.md
