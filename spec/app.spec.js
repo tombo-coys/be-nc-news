@@ -3,7 +3,7 @@ const chai = require("chai")
 chai.use(require("chai-sorted"))
 const { expect } = require('chai');
 const request = require('supertest');
-const app = require('../app.js');
+const app = require('../app/app');
 const connection = require('../db/connection')
 
 
