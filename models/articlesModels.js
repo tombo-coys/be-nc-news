@@ -17,26 +17,33 @@ const fetchArticles = (article_id) => {
 const patchArticle = (update, article_id) => {
     if (update.inc_votes) {
         return connection('articles').where('article_id', article_id).increment('votes', update.inc_votes)
-            .returning('*')
-            .then((updatedArticle) => {
-                if (!updatedArticle.length) return Promise.reject({
-                    status: 404,
-                    msg: 'Article ID does not exist'
-                })
-                else return updatedArticle[0]
-            });
-    } else return connection('articles').where('article_id', article_id).returning('*')
-    // Promise.reject({
-    //     status: 400,
-    //     msg: 'Bad Request: You cannot update that key, only votes'
-    // })
+        .returning('*')
+        .then((updatedArticle) => {
+            
+            if (!updatedArticle.length) return Promise.reject({
+                status: 404,
+                msg: 'Article ID does not exist'
+            })
+            else return updatedArticle[0]
+        });
+    } 
+    const artBool = checkArticleExists(article_id)
+    const unchangedArticle = connection('articles').where('article_id', article_id).returning('*')
+    return Promise.all([artBool, unchangedArticle]).then(([artBool, unchangedArticle]) => {
+        if (artBool) {
+            return unchangedArticle[0]
+        }
+    })
 }
 
 const sendComment = (comment, article_id) => {
     comment.author = comment.username;
     delete comment.username
     comment.article_id = article_id
-    return connection('comments').insert(comment).returning('*')
+    return connection('comments').insert(comment).returning('*').then((comment) => {
+        return comment[0]
+    })
+ 
 }
 
 

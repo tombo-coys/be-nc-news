@@ -12,8 +12,7 @@ const customErrors = (err, req, res, next) => {
 
 
 const psqlErrors = (err, req, res, next) => {
-   // console.log(err)
-    if (err.code === '22P02' && err.routine === 'pg_strtoint32') {
+    if (err.code === '22P02') {
         const message = err.message.split(' - ');
         const error = {
             status: 400,
@@ -27,13 +26,6 @@ const psqlErrors = (err, req, res, next) => {
             msg: message[1]
         }
         res.status(404).json(error)
-    } else if (err.code === '42703' && err.routine !== 'errorMissingColumn') {
-        const message = err.message.split(' - ');
-        const error = {
-            status: 400,
-            msg: message[1]
-        }
-        res.status(400).json(error)
     } else if (err.code === '42703') {
         const message = err.message.split(' - ');
         const error = {
@@ -45,7 +37,6 @@ const psqlErrors = (err, req, res, next) => {
 }
 
 const allOtherErrors = (err, req, res, next) => {
-    console.log(err)
     res.status(500).json({ msg: 'server error! something has gone very wrong!' })
 }
 

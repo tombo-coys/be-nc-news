@@ -11,9 +11,8 @@ const getArticles = (req, res, next) => {
 const updateArticle = (req, res, next) => {
     const { article_id } = req.params;
     const update = req.body
-
     patchArticle(update, article_id).then(article => {
-        res.status(200).json( {article} )
+        res.status(200).json({ article })
     }).catch(next)
 }
 
@@ -30,7 +29,6 @@ const getCommentsForArticle = (req, res, next) => {
     const { sort_by, order } = req.query
     const { article_id } = req.params;
     fetchCommentsForArticle(article_id, sort_by, order).then(comments => {
-
         res.status(200).json({ comments })
     }).catch(next)
 }

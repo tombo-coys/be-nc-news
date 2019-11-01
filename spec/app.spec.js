@@ -12,6 +12,15 @@ describe('/api', () => {
     beforeEach(() => {
         return connection.seed.run();
     })
+    xit('GET 200 returns a JSON object describing all the available endpoints', () => {
+        return request(app)
+            .get('/api/')
+            .expect(200)
+            .then((response) => {
+                console.log(response)
+                expect(response).to.eql('')
+            })
+    });
     describe('/api/topics', () => {
         it('GET 200, returns the topic object with the correct key', () => {
             return request(app)
@@ -292,9 +301,9 @@ describe('/api', () => {
                 .send({})
                 .expect(200)
                 .then(({ body: { article } }) => {
-                    expect(article[0]).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
-                    expect(article[0].votes).to.eql(100)
-                    expect(article[0]).to.be.an('object')
+                    expect(article).to.have.keys('article_id', 'title', 'body', "votes", "topic", 'author', 'created_at')
+                    expect(article.votes).to.eql(100)
+                    expect(article).to.be.an('object')
                 })
         });
         describe('/api/articles/:article_id ERRORS', () => {
@@ -381,8 +390,8 @@ describe('/api', () => {
                     .send({ username: 'butter_bridge', body: 'this is a test commment' })
                     .expect(201)
                     .then(({ body: { comment } }) => {
-                        expect(comment[0].body).to.eql('this is a test commment');
-                        expect(comment[0].author).to.eql('butter_bridge');
+                        expect(comment.body).to.eql('this is a test commment');
+                        expect(comment.author).to.eql('butter_bridge');
                     })
             });
             it('GET 200 retuns an array of the comments for a given article ID', () => {
@@ -396,7 +405,7 @@ describe('/api', () => {
             });
             it('GET 200 returns an empty array when the article exists with no comments attached', () => {
                 return request(app)
-                    .get('/api/articles/2/comments')
+                    .get('/api/articles/3/comments')
                     .expect(200)
                     .then(({ body: { comments } }) => {
                         expect(comments).to.eql([])
@@ -545,7 +554,7 @@ describe('/api', () => {
                 .patch('/api/comments/1')
                 .send({ inc_votes: -1 })
                 .expect(200)
-                .then(({ body: {comment} }) => {
+                .then(({ body: { comment } }) => {
                     expect(comment).to.have.keys('comment_id', 'author', 'article_id', "votes", 'body', 'created_at')
                     expect(comment.votes).to.eql(15)
                 })

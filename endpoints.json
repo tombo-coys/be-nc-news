@@ -9,6 +9,15 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/users/:username:": {
+    "description": "serves an object of the user requested in the url endpoint",
+    "queries": [],
+    "exapleResponse": {
+      "username": "butter_bridge",
+      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+      "name": "jonny"
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all topics",
     "queries": ["author", "topic", "sort_by", "order"],
@@ -23,5 +32,83 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id" : {
+    "description": "returns an article object of the article requested in the URL",
+    "queries": [],
+    "exampleResponse": {
+      "article_id": 1,
+      "title": "Living in the shadow of a great man",
+      "body": "I find this existence challenging",
+      "votes": 100,
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "created_at": "2018-11-15T12:21:54.171Z",
+      "comment_count": 13
+    }
+  },
+  "PATCH /api/articles/:article_id" : {
+    "description": "accepts an object to increae the votes for an article and responds with the updated article",
+    "request": [{ "inc_votes" : 1 }],
+    "exampleResponse": 
+      {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man"  ,
+        "body": "I find this existence challenging",
+        "votes": 99,
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "created_at": "2018-11-15T12:21:54.171Z"
+      }
+    },
+  "POST /api/articles/:aticle_id/comments" : {
+    "description": "accepts an object with username and body and responds with the posted comment",
+    "request": [{ "username": "butter_bridge", "body": "this is a test commment" }],
+    "exampleResponse":  {
+      "comment_id": 19,
+      "author": "butter_bridge",
+      "article_id": 1,
+      "votes": 0,
+      "created_at": "2019-11-01T09:29:10.272Z",
+      "body": "this is a test commment"
+    }
+  },
+  "GET /api/articles/:article_id/comments" : {
+    "description": "responds with an array of comments for the requested article_id, and accepts queries",
+    "queries": ["sort_by", "order"],
+    "exampleResponse":[
+      {
+        "comment_id": 2,
+        "votes": 14,
+        "created_at": "2016-11-22T12:36:03.389Z",
+        "author": "butter_bridge",
+        "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky."
+      },
+      {
+        "comment_id": 3,
+        "votes": 100,
+        "created_at": "2015-11-23T12:36:03.389Z",
+        "author": "icellusedkars",
+        "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works."
+      }
+    ]
+  },
+  "PATCH /api/comments/:comment_id" : {
+    "description": "request accepts an object to increase the current votes and responds with the updated comment requested in the url",
+    "request": [{ "inc_votes": "newVote" }],
+    "exampleResponse" :{
+      "comment_id": 1,
+      "author": "butter_bridge",
+      "article_id": 9,
+      "votes": 15,
+      "created_at": "2017-11-22T12:36:03.389Z",
+      "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!"
+    }
+  },
+  "DELETE /api/comments/:comment_id" : {
+    "description": "deletes the given comment in the URL ",
+    "queries": [],
+    "exampleResponse" : []
   }
-}
+
+  }
