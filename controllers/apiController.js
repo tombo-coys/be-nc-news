@@ -1,4 +1,4 @@
-const fetchAllEndPoints = require('../models/apiModel')
+
 const endPoints = require('../endpoints.json')
 
 const getAllEndPoints = (req, res, next) => {
