@@ -4,7 +4,7 @@ This repo is the back-end API for a news app. The app allows users to read topic
 
 ## Building the API
 
-The API uses a PSQL database and is built using knex and express. The live API is hosted on Heroku, here https://toms-nc-news-app.herokuapp.com/api
+The API uses a PSQL database and is built using knex and express. The live API is hosted on Heroku, [here](https://toms-nc-news-app.herokuapp.com/api)
 
 ## Getting Started
 
@@ -96,10 +96,10 @@ GET /api
 
 ## Built With 
 
-- [Node.js] (https://nodejs.org/en/) - Javascript runtime
-- [PostgreSQL] (https://www.postgresql.org/) - open-source relational database system
-- [Express] (https://expressjs.com/) - a web framework for Node.js
-- [Knex] (http://knexjs.org/) - an SQL query builder
+- [Node.js](https://nodejs.org/en/) - Javascript runtime
+- [PostgreSQL](https://www.postgresql.org/) - open-source relational database system
+- [Express](https://expressjs.com/) - a web framework for Node.js
+- [Knex](http://knexjs.org/) - an SQL query builder
 
 
 ## Acknowledgements
