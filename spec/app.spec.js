@@ -12,13 +12,12 @@ describe('/api', () => {
     beforeEach(() => {
         return connection.seed.run();
     })
-    xit('GET 200 returns a JSON object describing all the available endpoints', () => {
+    it('GET 200 returns a JSON object describing all the available endpoints', () => {
         return request(app)
             .get('/api/')
             .expect(200)
-            .then((endpointsJson) => {
-                console.log(endpointsJson)
-                expect(response).to.eql('')
+            .then(({body}) => {
+                expect(body).to.contain.keys('GET /api',  'GET /api/topics', 'GET /api/users/:username:','GET /api/articles',  'GET /api/articles/:article_id',  'PATCH /api/articles/:article_id' , 'POST /api/articles/:aticle_id/comments', 'GET /api/articles/:article_id/comments', 'PATCH /api/comments/:comment_id',  'DELETE /api/comments/:comment_id')
             })
     });
     describe('/api/topics', () => {
