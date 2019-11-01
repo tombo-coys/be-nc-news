@@ -104,7 +104,7 @@ GET /api
 
 ## Acknowledgements
 
-- [Northcoders] (https://northcoders.com/) for the support and wonderful curriculum.
+- [Northcoders](https://northcoders.com/) for the support and wonderful curriculum.
 
-- Jcraggs (https://github.com/jcraggs) and Harrypfry (https://github.com/harrypfry/) for the intermittent pair-programming and debugging help
+- [Jcraggs](https://github.com/jcraggs) and [Harrypfry](https://github.com/harrypfry/) for the intermittent pair-programming and debugging help
 
