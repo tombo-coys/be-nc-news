@@ -16,8 +16,8 @@ describe('/api', () => {
         return request(app)
             .get('/api/')
             .expect(200)
-            .then((response) => {
-                console.log(response)
+            .then((endpointsJson) => {
+                console.log(endpointsJson)
                 expect(response).to.eql('')
             })
     });
@@ -339,18 +339,6 @@ describe('/api', () => {
                         })
                     })
             });
-            // it('ERROR PATCH 400 returns error when sending an invalid key for the patch', () => {
-            //     return request(app)
-            //         .patch('/api/articles/1')
-            //         .send({ topic: 1 })
-            //         .expect(400)
-            //         .then(({ body }) => {
-            //             expect(body).to.eql({
-            //                 status: 400,
-            //                 msg: "Bad Request: You cannot update that key, only votes"
-            //             })
-            //         })
-            // });
             it('ERROR PATCH 400 returns error when sending an invaid value for the patch', () => {
                 return request(app)
                     .patch('/api/articles/1')
@@ -469,9 +457,21 @@ describe('/api', () => {
                     .then(({ body }) => {
                         expect(body).to.eql({
                             status: 400,
-                            msg: "column \"comment\" of relation \"comments\" does not exist"
+                            msg: "missing key on post request"
                         })
                     })
+            });
+            it('ERROR POST 400 returns error when post request doesnt include all the required keys', () => {
+                return request(app)
+                .post('/api/articles/1/comments')
+                .send({  comment: 'this is a test commment' })
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body).to.eql({
+                        status: 400,
+                        msg: "missing key on post request"
+                    })
+                })
             });
             it('ERROR POST 400 returns error when username does not exist', () => {
                 return request(app)
@@ -596,18 +596,6 @@ describe('/api', () => {
                         expect(body).to.eql({ status: 400, msg: '$1 where \"comment_id\" = $2 returning *' })
                     })
             });
-            // it('ERROR PATCH 400 returns error when the wrong key is passed ', () => {
-            //     return request(app)
-            //         .patch('/api/comments/1')
-            //         .send({ topic: 1 })
-            //         .expect(400)
-            //         .then(({ body }) => {
-            //             expect(body).to.eql({
-            //                 status: 400,
-            //                 msg: "Bad Request: You cannot update that key, only votes"
-            //             })
-            //         })
-            // });
             it('ERROR PATCH 400 returns error when passed the wrong value i.e. a string', () => {
                 return request(app)
                     .patch('/api/comments/1')

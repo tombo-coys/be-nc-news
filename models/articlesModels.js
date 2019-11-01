@@ -37,6 +37,12 @@ const patchArticle = (update, article_id) => {
 }
 
 const sendComment = (comment, article_id) => {
+    if(!comment.username || !comment.body){
+        return Promise.reject( {
+            status: 400,
+            msg: `missing key on post request`
+        })
+    }
     comment.author = comment.username;
     delete comment.username
     comment.article_id = article_id
