@@ -97,7 +97,6 @@ describe('makeRefObj', () => {
       author: 'cooljmessy',
       created_at: '2016 - 12 - 13T20: 58: 40.516Z'
     }]
-
     const expected = { 'Stone Soup': 35 }
     expect(makeRefObj(actual)).to.eql(expected)
   });
@@ -120,8 +119,6 @@ describe('makeRefObj', () => {
       author: 'weegembump',
       created_at: '2017-08-18T09:25:14.275Z'
     }];
-
-
     const expected = { 'Game of talents: management lessons from top football coaches': 24, 'Sweet potato & butternut squash soup with lemon & garlic toast': 25 }
     expect(makeRefObj(actual)).to.eql(expected);
   });

@@ -14,20 +14,13 @@ const patchComment = (comment, comment_id) => {
     } else return connection('comments').where('comment_id', comment_id).then((comment) => {
         return comment[0]
     })
-    // return Promise.reject({
-    //     status: 400,
-    //     msg: "Bad Request: You cannot update that key, only votes"
-    // })
-
-}
+  }
 
 
 
 const removeComment = (comment_id) => {
-
     const removedComment = connection('comments').where('comment_id', comment_id).del().returning("*")
     const commentBool = checkCommentExists(comment_id)
-
     return Promise.all([removedComment, commentBool]).then(([removedComment, commentBool]) => {
         if (commentBool) {
             return removedComment;

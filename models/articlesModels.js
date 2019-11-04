@@ -17,16 +17,15 @@ const fetchArticles = (article_id) => {
 const patchArticle = (update, article_id) => {
     if (update.inc_votes) {
         return connection('articles').where('article_id', article_id).increment('votes', update.inc_votes)
-        .returning('*')
-        .then((updatedArticle) => {
-            
-            if (!updatedArticle.length) return Promise.reject({
-                status: 404,
-                msg: 'Article ID does not exist'
-            })
-            else return updatedArticle[0]
-        });
-    } 
+            .returning('*')
+            .then((updatedArticle) => {
+                if (!updatedArticle.length) return Promise.reject({
+                    status: 404,
+                    msg: 'Article ID does not exist'
+                })
+                else return updatedArticle[0]
+            });
+    }
     const artBool = checkArticleExists(article_id)
     const unchangedArticle = connection('articles').where('article_id', article_id).returning('*')
     return Promise.all([artBool, unchangedArticle]).then(([artBool, unchangedArticle]) => {
@@ -37,19 +36,19 @@ const patchArticle = (update, article_id) => {
 }
 
 const sendComment = (comment, article_id) => {
-    if(!comment.username || !comment.body){
-        return Promise.reject( {
+    if (!comment.username || !comment.body) {
+        return Promise.reject({
             status: 400,
             msg: `missing key on post request`
         })
     }
-    comment.author = comment.username;
-    delete comment.username
-    comment.article_id = article_id
-    return connection('comments').insert(comment).returning('*').then((comment) => {
+    const copyComment = { ...comment }
+    copyComment.author = copyComment.username;
+    delete copyComment.username
+    copyComment.article_id = article_id
+    return connection('comments').insert(copyComment).returning('*').then((comment) => {
         return comment[0]
     })
- 
 }
 
 
@@ -76,7 +75,6 @@ const fetchCommentsForArticle = (article_id, sort_by, order) => {
             status: 404,
             msg: 'Article ID does not exist'
         })
-
     })
 }
 
@@ -123,7 +121,6 @@ const fetchAllArticles = (sort_by, order, author, topic) => {
             status: 404,
             msg: 'Author does not exist'
         })
-
     })
 }
 

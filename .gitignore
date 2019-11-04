@@ -1,6 +1,2 @@
 node_modules
 knexfile.js
-output.txt
-querybuilder.sql
-error-handling.md
-hosting.md

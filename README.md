@@ -4,7 +4,7 @@ This repo is the back-end API for a news app. The app allows users to read topic
 
 ## Building the API
 
-The API uses a PSQL database and is built using knex and express. The live API is hosted on Heroku, [here](https://toms-nc-news-app.herokuapp.com/api)
+The API uses a PSQL database and is built using knex and express. The live API is hosted on Heroku [here](https://toms-nc-news-app.herokuapp.com/api)
 
 ## Getting Started
 
@@ -14,9 +14,9 @@ Clone this repository by running the code below in your terminal:
 
     git clone https://github.com/tombo-coys/be-nc-news.git
 
-`cd` into the directory and add the required dependencies by running the code below in the directory:
+`cd` into the directory and install the required dependencies (knex(^0.20.0), pg(^7.12.1) and express(^4.17.1)) by running the code below in the directory:
 
-    npm i knex pg express
+    npm install
 
 You will need to create a 'knexfile.js' to allow local deployment and testing, as this has been included in the .gitignore. To do so run the following command in your terminal
 
