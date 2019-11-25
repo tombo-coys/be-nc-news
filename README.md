@@ -4,7 +4,9 @@ This repo is the back-end API for a news app. The app allows users to read topic
 
 ## Building the API
 
-The API uses a PSQL database and is built using knex and express. The live API is hosted on Heroku [here](https://toms-nc-news-app.herokuapp.com/api)
+The API uses a PSQL database and is built using knex and express. The live API is hosted on Heroku [here](https://toms-nc-news-app.herokuapp.com/api).
+
+The front-end repo can be found [here](https://github.com/tombo-coys/fe-nc-news/tree/master/nc-news-fe)
 
 ## Getting Started
 

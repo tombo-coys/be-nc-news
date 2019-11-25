@@ -2,7 +2,7 @@ module.exports = [
   {
     username: 'tickle122',
     name: 'Tom Tickle',
-    avatar_url: 'https://www.spiritsurfers.net/monastery/wp-content/uploads/_41500270_mrtickle.jpg',
+    avatar_url: 'https://www.netclipart.com/pp/m/338-3386466_tottenham-hotspur-new-logo.png',
   },
   {
     username: 'grumpy19',
@@ -17,7 +17,7 @@ module.exports = [
   {
     username: 'cooljmessy',
     name: 'Peter Messy',
-    avatar_url: 'https://i.imgur.com/WfX0Neu.jpg',
+    avatar_url: 'https://kpbs.media.clients.ellingtoncms.com/img/croppedphotos/2019/05/20/AE_Emma_Goldman_dmFAir2_t800.jpg?90232451fbcadccc64a17de7521d859a8f88077d',
   },
   {
     username: 'weegembump',
