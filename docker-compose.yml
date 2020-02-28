@@ -1,0 +1,43 @@
+version: '3'
+services:
+  mysql:
+    image: 'mysql:5.6'
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports: 
+      - '9091:9090'
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - be-nc-news
+
+  nc-news-be:
+    container_name: 'nc-news-server'
+    build: 
+      context: .
+      args:
+        - NPM_TOKEN
+    command: /bin/sh -c 'npm install && node db/seeds/seedc.js && npm start'
+    environment:
+      NPM_TOKEN: ${NPM_TOKEN}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 9090
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: nc_news
+    volumes:
+        - ./:/app:delegated
+        - node_modules:/app/node_modules
+    ports:
+      - '9090:9090'
+    networks: 
+      - be-nc-news      
+
+volumes:
+  mysql:
+  node_modules:
+
+networks:
+  be-nc-news:
+    external:
+      name: be-nc-news
